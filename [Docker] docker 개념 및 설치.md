@@ -163,9 +163,9 @@ $ docker rm $(docker ps -q -f status=exited)
 
 
 
-## 도커 파일 만들기
+# 도커 삽질기 
 
-도커 파일은 이미지를 생성하기 위한 스크립트. rails - ubuntu 환경을 한번에 만들기 위해 사용하기 좋다 
+도커 파일을 만들어보자 
 
 ```bash
 $ touch Dockerfile
@@ -240,19 +240,83 @@ RUN sudo apt-get update
 RUN sudo apt-get install -y nginx-extras passenger
 ```
 
-!!!
+!!!!!!!!!
 
-뭔가 망했다.. !!!무서워서 끄고 
+망했다... 
+
+## 도커 파일 만들기 따라하기 
 
 <https://subicura.com/2017/02/10/docker-guide-for-beginners-create-image-and-deploy.html>
 
 를 보고 다시 시작 
 
-##### 도커파일
+```
+docker run --rm \
+-p 4567:4567 \
+-v $PWD:/usr/src/app \
+-w /usr/src/app \
+ruby \
+bash -c "bundle install && bundle exec ruby app.rb -o 0.0.0.0"
+```
+
+##### error 
+
+```
+`find_spec_for_exe': can't find gem bundler (>= 0.a) with executable bundle (Gem::GemNotFoundException)
+```
+
+##### solve
+
+Gemfile.lock 삭제 
+
+성공!
+
+---
+
+
+
+
+
+### 도커파일
 
 도커는 이미지를 만들기위해 단순 텍스트 파일인 이미지 빌드용 DSL(Domain Specific Language) 파일을 사용한다.
 
 고-오급 개발자는 바로 dockerfile 을 만들 고 삽질을 해야한다고 한다. 위안을 받았다..!
+
+##### 도커파일 만들기
+
+__Dockerfile__ 이름으로 만들면 된다. 
+
+##### 도커파일 실행
+
+```
+docker build -t [name] .
+```
+
+도커 이미지가 생성된다
+
+```
+docker images
+```
+
+포트로 실행해보자
+
+```
+docker run -d -p 8080:4567 app
+```
+
+완성!!! 꺄
+
+도커 태그
+
+```
+docker tag sinatra-app soomtopia/sinatra-app:1
+docker push soomtopia/sinatra-app:1
+```
+
+
+
+
 
 ## 참고자료
 
