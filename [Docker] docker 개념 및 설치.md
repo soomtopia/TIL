@@ -16,6 +16,10 @@
 
 
 
+## 기존 서버 구축
+
+기존에 서버를 구축하려면 ubuntu 인스턴스 생성 / 웹 서버 설정 / db 설정 / 소스 복사 등 일일이 손으로 하나하나 설정해야한다. 도커를 사용하면 호스트 OS 와 서비스 운영 환경을 분리시켜 이런 번거로움을 해결해주는듯 !? 
+
 ## 가상화
 
 가상화를 통해 하드웨어의 물리적 리소스를 최대한 활용할 수 있다. 
@@ -193,132 +197,8 @@ $ touch dockerfile
 
 
 
-## 도커파일로 이미지 만들기 연습 
-
-내가만든 도커파일
-
-rails-nginx-sqlite
-
-```dockerfile
-FROM ubnutu:16.04
-
-# install basic packages 
-RUN sudo apt-get update
-RUN sudo apt-get install -qq -y git curl sqlite3 build-essential openssl wget zlib1g-dev libssl-dev
-
-# install Node.js
-
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt-get -qq -y install -y nodejs
-
-# install ruby 
-
-RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv
-RUN echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-RUN echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-RUN exec $SHELL
-RUN git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
-RUN rbenv install 2.4.3
-RUN rbenv global 2.4.3 
-RUN echo "gem: --no-document" > ~/.gemrc
-RUN gem install bundler
-RUN rbenv rehash
-
-# install rails
-
-RUN gem install rails -v 5.2.0 --no-ri --no-rdoc
-RUN rbenv rehash
-RUN rails -vn
-
-# install nginx 
-
-RUN sudo apt-get -qq -y install dirmngr gnupg
-RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
-RUN sudo apt-get install -y apt-transport-https ca-certificates
-RUN sudo sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger xenial main > /etc/apt/sources.list.d/passenger.list'
-RUN sudo apt-get update
-RUN sudo apt-get install -y nginx-extras passenger
-```
-
-!!!!!!!!!
-
-망했다... 
-
-## 도커 파일 만들기 따라하기 
-
-<https://subicura.com/2017/02/10/docker-guide-for-beginners-create-image-and-deploy.html>
-
-를 보고 다시 시작 
-
-```
-docker run --rm \
--p 4567:4567 \
--v $PWD:/usr/src/app \
--w /usr/src/app \
-ruby \
-bash -c "bundle install && bundle exec ruby app.rb -o 0.0.0.0"
-```
-
-##### error 
-
-```
-`find_spec_for_exe': can't find gem bundler (>= 0.a) with executable bundle (Gem::GemNotFoundException)
-```
-
-##### solve
-
-Gemfile.lock 삭제 
-
-성공!
-
----
-
-
-
-
-
-### 도커파일
-
-도커는 이미지를 만들기위해 단순 텍스트 파일인 이미지 빌드용 DSL(Domain Specific Language) 파일을 사용한다.
-
-고-오급 개발자는 바로 dockerfile 을 만들 고 삽질을 해야한다고 한다. 위안을 받았다..!
-
-##### 도커파일 만들기
-
-__Dockerfile__ 이름으로 만들면 된다. 
-
-##### 도커파일 실행
-
-```
-docker build -t [name] .
-```
-
-도커 이미지가 생성된다
-
-```
-docker images
-```
-
-포트로 실행해보자
-
-```
-docker run -d -p 8080:4567 app
-```
-
-완성!!! 꺄
-
-도커 태그
-
-```
-docker tag sinatra-app soomtopia/sinatra-app:1
-docker push soomtopia/sinatra-app:1
-```
-
-
-
 
 
 ## 참고자료
 
 - <https://www.redhat.com/ko/topics/virtualization/what-is-virtualization>
-
