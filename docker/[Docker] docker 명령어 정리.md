@@ -13,11 +13,7 @@ docker search ubuntu
 docker pull ubuntu:latest
 ```
 
-##### 이미지 목록 출력하기
-
-```
-docker images
-```
+##### 이미지 목록 
 
 ##### 컨테이너 생성하기
 
@@ -66,6 +62,12 @@ docker rm hello
 
 ```
 docker rmi ubuntu:latest
+```
+
+##### 모든 이미지 삭제하기
+
+```
+docker rmi $(docker images -q)
 ```
 
 ##### 모든 컨테이너 삭제하기
