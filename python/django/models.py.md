@@ -197,3 +197,4 @@ $ python3 manage.py migrate
 ```
 
 를 하면 데이터베이스에 적용이 된다. 
+
